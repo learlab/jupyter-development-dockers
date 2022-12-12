@@ -16,10 +16,11 @@ RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" && \
 RUN mamba install --quiet --yes \
         'gh' \
         'nb_conda_kernels' \
+        'conda-build' \
         'spacy' \
         'cupy' \
     && pip install \
- # for running arbitrary web servers
+# for running arbitrary web servers
         jupyter-server-proxy \
         dask-labextension \
 # for Dask visualization
