@@ -19,4 +19,4 @@ availableSecrets:
      env: 'USERNAME'
 options:
    logging: CLOUD_LOGGING_ONLY
-timeout: 7200
+timeout: 7200s
