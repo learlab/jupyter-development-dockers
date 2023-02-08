@@ -6,7 +6,7 @@ These dockers were created to support our [JupyterHub Deployment](https://github
 
 This image comes with the basic workflow tools we use in our lab such as git, GitHub CLI, and a GitHub GUI extension for the JupyterLab interface.
 
-The image also comes preloaded with the correct version of CUDA and CUDA-enabled distributions of PyToch, SpaCy, and Huggingface's Transformers.
+The image also comes preloaded with the correct version of CUDA and CUDA-enabled distributions of PyTorch, SpaCy, and Huggingface's Transformers.
 
 ## r-studio
 
