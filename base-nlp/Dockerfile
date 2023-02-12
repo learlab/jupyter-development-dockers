@@ -17,7 +17,7 @@ RUN mamba install --quiet --yes \
         'conda-build' \
         'spacy' \
         'cupy' \
-        'pyarrow'
+        'pyarrow' \
     && pip install --quiet \
 # for running arbitrary web servers
         jupyter-server-proxy \
