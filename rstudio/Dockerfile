@@ -20,7 +20,11 @@ RUN apt-get update -qq --yes && \
         # libpq5 \
         # libclang-dev > /dev/null
 
-ENV RSTUDIO_URL https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb
+#ENV RSTUDIO_URL https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb
+# jupyter/r-notebook is built from Ubuntu 22.04
+# Ubuntu 22.04 has migrated from libssl1.X to OpenSSL 3.0
+# We need the daily build of RStudio server, which supports OpenSSL 3.0
+ENV RSTUDIO_URL https://s3.amazonaws.com/rstudio-ide-build/server/jammy/amd64/rstudio-server-2023.03.0-daily-316-amd64.deb
 RUN wget ${RSTUDIO_URL} --quiet -O /tmp/rstudio.deb \
     && gdebi --quiet --non-interactive /tmp/rstudio.deb \
     && rm /tmp/rstudio.deb
