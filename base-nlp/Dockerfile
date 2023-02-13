@@ -4,8 +4,7 @@ USER ${NB_UID}
 
 RUN conda install --quiet --yes \
     -c pytorch -c nvidia \
-    pytorch torchvision torchaudio \
-    pytorch-cuda=11.6
+    pytorch pytorch-cuda=11.6
 
 RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" \
     && echo "  - /home/jovyan/conda_envs/" >> "${CONDA_DIR}/.condarc" \
