@@ -1,14 +1,18 @@
 FROM jupyter/scipy-notebook
 
+USER root
+
+RUN conda init --system bash
+
 USER ${NB_UID}
 
-RUN conda install --quiet --yes \
-    -c pytorch -c nvidia \
-    pytorch pytorch-cuda=11.6
+RUN conda install --quiet --yes -c pytorch -c nvidia \
+        pytorch pytorch-cuda=11.6 \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"
 
 RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" \
     && echo "  - /home/jovyan/conda_envs/" >> "${CONDA_DIR}/.condarc" \
-    && conda init bash \
     && fix-permissions "${CONDA_DIR}" \
     && fix-permissions "/home/${NB_USER}"
 
