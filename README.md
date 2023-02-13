@@ -14,5 +14,4 @@ This image comes with the r-essentials for completing statistical work, as well 
 
 # Build Commands
 
-`docker build -t langdonholmes/${image_name}:${tag} /srv/jupyter/${image_name}/ -f ${tag}`
-`docker push langdonholmes/${image_name}:${tag}`
+Go to relevant directory and run `make` to execute a Docker build and Docker push sequence.
