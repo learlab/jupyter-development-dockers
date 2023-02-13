@@ -21,12 +21,13 @@ RUN apt-get update -qq --yes && \
         # libclang-dev > /dev/null
 
 ENV RSTUDIO_URL https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb
-ENV SHINY_URL https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.20.1002-amd64.deb
 RUN wget ${RSTUDIO_URL} -O /tmp/rstudio.deb \
-    && gdebi /tmp/rstudio.deb \
-    && rm /tmp/rstudio.deb \
-    && wget ${SHINY_URL} -O /tmp/shiny.deb \
-    && gdebi /tmp/shiny.deb \
+    && gdebi --quiet --non-interactive /tmp/rstudio.deb \
+    && rm /tmp/rstudio.deb
+    
+ENV SHINY_URL https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.20.1002-amd64.deb
+RUN wget ${SHINY_URL} -O /tmp/shiny.deb \
+    && gdebi --quiet --non-interactive /tmp/shiny.deb \
     && rm /tmp/shiny.deb
 
 USER ${NB_UID}
