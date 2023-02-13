@@ -2,17 +2,24 @@
 cuda=11.6
 
 #vars
-IMAGENAME=base_nlp
-TAG=latest
-REPO=langdonholmes
-IMAGEFULLNAME=${REPO}/${IMAGENAME}:${cuda}
+image=base_nlp
+repo=langdonholmes
+IMAGEFULLNAME=${repo}/${image}:${tag}
+
+ifeq ($(image),rstudio)
+   tag=latest
+else
+   tag=cuda-${cuda}
+endif
 
 .PHONY: help build push all
 
 help:
 	    @echo "Makefile arguments:"
 	    @echo ""
-	    @echo "cuda - CUDA Version"
+	    @echo ":repo: = ${repo} - DockerHub Repository"
+	    @echo ":image: = ${image} - Name of image to build"
+	    @echo ":cuda: = ${cuda} - CUDA Version (no effect on rstudio build)"
 	    @echo ""
 	    @echo "Makefile commands:"
 	    @echo "build"
@@ -20,9 +27,6 @@ help:
 	    @echo "all"
 
 .DEFAULT_GOAL := all
-
-print:
-		@echo docker build --build-arg CUDA_VERSION=${cuda} -t ${IMAGEFULLNAME} .
 
 build:
 	    @docker build --build-arg CUDA_VERSION=${cuda} -t ${IMAGEFULLNAME} .
