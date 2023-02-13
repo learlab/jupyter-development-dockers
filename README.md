@@ -11,3 +11,8 @@ The image also comes preloaded with the correct version of CUDA and CUDA-enabled
 ## r-studio
 
 This image comes with the r-essentials for completing statistical work, as well as some compilers that are required for installing additional R packages.
+
+# Build Commands
+
+`docker build -t langdonholmes/${image_name}:${tag} /srv/jupyter/${image_name}/ -f ${tag}`
+`docker push langdonholmes/${image_name}:${tag}`

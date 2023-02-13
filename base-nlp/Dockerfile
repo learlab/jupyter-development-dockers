@@ -1,5 +1,7 @@
 FROM jupyter/scipy-notebook
 
+ARG CUDA_VERSION=11.6
+
 USER root
 
 RUN conda init --system bash
@@ -7,7 +9,7 @@ RUN conda init --system bash
 USER ${NB_UID}
 
 RUN conda install --quiet --yes -c pytorch -c nvidia \
-        pytorch pytorch-cuda=11.6 \
+        pytorch pytorch-cuda=${CUDA_VERSION} \
     && fix-permissions "${CONDA_DIR}" \
     && fix-permissions "/home/${NB_USER}"
 
