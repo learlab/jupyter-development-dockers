@@ -11,12 +11,12 @@ USER root
 
 RUN apt-get update -qq --yes && \
     apt-get install --yes --no-install-recommends -qq \
-        gdebi-core > /dev/null
+        gdebi-core \
+        cmake > /dev/null
         # psmisc \
         # sudo \
         # libapparmor1 \
         # lsb-release \
-        # cmake \
         # libpq5 \
         # libclang-dev > /dev/null
 
@@ -37,6 +37,7 @@ RUN wget ${SHINY_URL} --quiet -O /tmp/shiny.deb \
 USER ${NB_UID}
 
 RUN mamba install --quiet --yes \
+    'gh' \
     'r-hmisc' \
     'r-lme4' \
     'r-lmertest' \
