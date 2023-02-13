@@ -9,9 +9,12 @@ RUN python3 -m pip install jupyter-rsession-proxy \
 
 USER root
 
+RUN wget --version
+
 RUN apt-get update -qq --yes && \
     apt-get install --yes --no-install-recommends -qq \
-        gdebi-core > /dev/null
+        gdebi-core \
+        wget > /dev/null
         # psmisc \
         # sudo \
         # libapparmor1 \
