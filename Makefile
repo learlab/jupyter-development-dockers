@@ -1,18 +1,18 @@
 #Dockerfile vars
-CUDA_VERSION=11.6
+cuda=11.6
 
 #vars
 IMAGENAME=base_nlp
 TAG=latest
 REPO=langdonholmes
-IMAGEFULLNAME=${REPO}/${IMAGENAME}:${CUDA_VERSION}
+IMAGEFULLNAME=${REPO}/${IMAGENAME}:${cuda}
 
 .PHONY: help build push all
 
 help:
 	    @echo "Makefile arguments:"
 	    @echo ""
-	    @echo "CUDA_VERSION - CUDA Version"
+	    @echo "cuda - CUDA Version"
 	    @echo ""
 	    @echo "Makefile commands:"
 	    @echo "build"
@@ -22,10 +22,10 @@ help:
 .DEFAULT_GOAL := all
 
 print:
-		@echo docker build --build-arg CUDA_VERSION=${CUDA_VERSION} -t ${IMAGEFULLNAME} .
+		@echo docker build --build-arg CUDA_VERSION=${cuda} -t ${IMAGEFULLNAME} .
 
 build:
-	    @docker build --build-arg CUDA_VERSION=${CUDA_VERSION} -t ${IMAGEFULLNAME} .
+	    @docker build --build-arg CUDA_VERSION=${cuda} -t ${IMAGEFULLNAME} .
 
 push:
 	    @docker push ${IMAGEFULLNAME}
