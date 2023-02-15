@@ -11,6 +11,7 @@ USER root
 
 RUN apt-get update -qq --yes && \
     apt-get install --yes --no-install-recommends -qq \
+        lmodern \
         gdebi-core \
         cmake > /dev/null
 
