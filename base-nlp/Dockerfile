@@ -20,6 +20,7 @@ RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" \
 
 RUN mamba install --quiet --yes \
         'gh' \
+        'git-lfs' \
         'nb_conda_kernels' \
         'conda-build' \
         'spacy' \

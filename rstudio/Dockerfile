@@ -35,6 +35,7 @@ USER ${NB_UID}
 
 RUN mamba install --quiet --yes \
     'gh' \
+    'git-lfs' \
     'r-hmisc' \
     'r-lme4' \
     'r-lmertest' \
