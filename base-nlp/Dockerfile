@@ -1,4 +1,4 @@
-FROM jupyter/scipy-notebook
+FROM jupyter/minimal-notebook
 
 ARG CUDA_VERSION=11.6
 
