@@ -23,8 +23,6 @@ RUN mamba install --quiet --yes \
         'git-lfs' \
         'nb_conda_kernels' \
         'conda-build' \
-        'spacy' \
-        'cupy' \
         'pyarrow' \
     && pip install --quiet \
 # for running arbitrary web servers
