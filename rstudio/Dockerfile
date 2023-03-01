@@ -45,6 +45,7 @@ RUN mamba install --quiet --yes \
     'r-rstatix' \
     'r-renv' \
     'r-quarto' \
+    'r-tidyverse' \
     'jupyter-server-proxy' \
     && mamba clean --all -f -y \
     && fix-permissions "${CONDA_DIR}" \
