@@ -115,6 +115,50 @@ RUN set -x && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
 
+RUN conda init --system bash
+
+# Install all OS dependencies for fully functional notebook server
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends \
+    # Common useful utilities
+    git \
+    nano-tiny \
+    tzdata \
+    unzip \
+    vim-tiny \
+    # git-over-ssh
+    openssh-client \
+    # less is needed to run help in R
+    # see: https://github.com/jupyter/docker-stacks/issues/1588
+    less \
+    # nbconvert dependencies
+    # https://nbconvert.readthedocs.io/en/latest/install.html#installing-tex
+    texlive-xetex \
+    texlive-fonts-recommended \
+    texlive-plain-generic \
+    # Enable clipboard on Linux host systems
+    xclip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create alternative for nano -> nano-tiny
+RUN update-alternatives --install /usr/bin/nano nano /bin/nano-tiny 10
+
+USER ${NB_UID}
+
+RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" \
+    && echo "  - /home/jovyan/conda_envs/" >> "${CONDA_DIR}/.condarc" \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"
+
+RUN mamba install --quiet --yes \
+        'gh' \
+        'git-lfs' \
+        'nb_conda_kernels' \
+        'conda-build' \
+    && mamba clean --all -f -y \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"
+
 # Configure container startup
 ENTRYPOINT ["tini", "-g", "--"]
 CMD ["start.sh"]
