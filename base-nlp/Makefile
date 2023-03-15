@@ -2,7 +2,7 @@
 cuda=11.6
 
 #vars
-image=base_nlp
+image=base-nlp
 repo=langdonholmes
 tag=cuda-${cuda}
 IMAGEFULLNAME=${repo}/${image}:${tag}
