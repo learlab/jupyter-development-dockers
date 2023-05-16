@@ -1,5 +1,5 @@
 #Dockerfile vars
-cuda=11.6
+cuda=11.8
 
 #vars
 image=base-nlp
