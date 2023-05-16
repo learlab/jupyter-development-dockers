@@ -1,6 +1,6 @@
-FROM jupyter/minimal-notebook
+FROM jupyter/scipy-notebook
 
-ARG CUDA_VERSION=11.6
+ARG CUDA_VERSION=11.8
 
 USER root
 
