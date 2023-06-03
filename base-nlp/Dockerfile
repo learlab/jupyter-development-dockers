@@ -8,6 +8,12 @@ RUN conda init --system bash
 
 USER ${NB_UID}
 
+RUN conda update --quiet --yes -n base conda \
+    && conda install --quiet --yes -n base conda-libmamba-solver \
+    && conda config --set solver libmamba \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"
+
 RUN conda install --quiet --yes -c pytorch -c nvidia \
         pytorch pytorch-cuda=${CUDA_VERSION} \
     && fix-permissions "${CONDA_DIR}" \
@@ -18,7 +24,7 @@ RUN echo "envs_dirs:" >> "${CONDA_DIR}/.condarc" \
     && fix-permissions "${CONDA_DIR}" \
     && fix-permissions "/home/${NB_USER}"
 
-RUN mamba install --quiet --yes \
+RUN conda install --quiet --yes \
         'gh' \
         'git-lfs' \
         'nb_conda_kernels' \
@@ -35,7 +41,6 @@ RUN mamba install --quiet --yes \
         jupyter-archive \
 # command line progress bar
         rich \
-    && mamba clean --all -f -y \
-    && jupyter labextension install jupyterlab-plotly \
+    && conda clean --all -f -y \
     && fix-permissions "${CONDA_DIR}" \
     && fix-permissions "/home/${NB_USER}"
