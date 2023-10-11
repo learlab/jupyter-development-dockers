@@ -25,7 +25,7 @@ help:
 .DEFAULT_GOAL := all
 
 build:
-	    @docker build --build-arg CUDA_VERSION=${cuda} -t ${IMAGEFULLNAME} .
+	    @docker build -t ${IMAGEFULLNAME} .
 
 push:
 	    @docker push ${IMAGEFULLNAME}
