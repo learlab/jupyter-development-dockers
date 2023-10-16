@@ -12,8 +12,16 @@ USER root
 RUN apt-get update -qq --yes && \
     apt-get install --yes --no-install-recommends -qq \
         lmodern \
-        gdebi-core \
-        cmake > /dev/null
+        gdebi-core\
+        cmake  \
+# Following are required for non-Conda install of tidyverse
+        libfontconfig1-dev \
+        libharfbuzz-dev \
+        libfreetype6-dev \
+        libpng-dev \
+        libtiff5-dev \
+        libjpeg-dev \
+        libfribidi-dev > /dev/null
 
 #ENV RSTUDIO_URL https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb
 # jupyter/r-notebook is built from Ubuntu 22.04
@@ -36,6 +44,7 @@ USER ${NB_UID}
 RUN mamba install --quiet --yes \
     'gh' \
     'git-lfs' \
+    'pkg-config' \
     'r-hmisc' \
     'r-lme4' \
     'r-lmertest' \
