@@ -21,14 +21,14 @@ RUN mamba install --quiet --yes \
         conda-build \
         pyarrow
 
-RUN pip3 install torch
+RUN pip3 install torch accelerate datasets
 
 RUN pip3 install --quiet \
         # for running arbitrary web servers
         jupyter-server-proxy \
-        #        dask-labextension \
-        # for Dask visualization
-        #        graphviz \
+	# ruff is a Python formatter and linter
+	ruff \
+	# Git menu in left sidebar (maybe not working)
         jupyterlab-git \
         # adds un/zip to right-click context menu in file explorer
         jupyter-archive \

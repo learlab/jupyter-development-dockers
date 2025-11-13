@@ -14,14 +14,34 @@ RUN apt-get update -qq --yes && \
         lmodern \
         gdebi-core\
         cmake  \
-# Following are required for non-Conda install of tidyverse
+# Network/web packages (httr, curl, devtools, etc.)
+        libcurl4-openssl-dev \
+        libssl-dev \
+        libssh2-1-dev \
+# LaTeX extras that may be used for Quarto and Rmarkdown
+	texlive \
+        texlive-latex-extra \
+        texlive-fonts-extra \
+# For graphing libraries like igraph and TidySEM
+	libglpk-dev \
+# Protobuf
+	protobuf-compiler \
+	libprotobuf-dev \	
+# Graphics libraries for tidyverse
         libfontconfig1-dev \
         libharfbuzz-dev \
         libfreetype6-dev \
         libpng-dev \
         libtiff5-dev \
         libjpeg-dev \
+        libcairo2-dev \
         libfribidi-dev > /dev/null
+
+# Quarto CLI
+ARG QUARTO_URL=https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.9/quarto-1.9.9-linux-amd64.deb
+RUN wget ${QUARTO_URL} --quiet -O /tmp/quarto.deb \
+    && gdebi --quiet --non-interactive /tmp/quarto.deb \
+    && rm /tmp/quarto.deb
 
 #ENV RSTUDIO_URL https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb
 # jupyter/r-notebook is built from Ubuntu 22.04
@@ -29,15 +49,28 @@ RUN apt-get update -qq --yes && \
 # We need the daily build of RStudio server, which supports OpenSSL 3.0
 # Once the stable release of RStudio server supports Ubuntu 22.04 (Jammy),
 # we should switch back to stable.
-ENV RSTUDIO_URL https://s3.amazonaws.com/rstudio-ide-build/server/jammy/amd64/rstudio-server-2023.03.0-daily-316-amd64.deb
+# ENV RSTUDIO_URL https://s3.amazonaws.com/rstudio-ide-build/server/jammy/amd64/rstudio-server-2023.03.0-daily-316-amd64.deb
+ARG RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2025.09.1-401-amd64.deb
 RUN wget ${RSTUDIO_URL} --quiet -O /tmp/rstudio.deb \
     && gdebi --quiet --non-interactive /tmp/rstudio.deb \
     && rm /tmp/rstudio.deb
     
-ENV SHINY_URL https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.20.1002-amd64.deb
+# ENV SHINY_URL https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.20.1002-amd64.deb
+ARG SHINY_URL=https://download3.rstudio.org/ubuntu-20.04/x86_64/shiny-server-1.5.23.1030-amd64.deb
 RUN wget ${SHINY_URL} --quiet -O /tmp/shiny.deb \
     && gdebi --quiet --non-interactive /tmp/shiny.deb \
     && rm /tmp/shiny.deb
+
+# Install conda compiler toolchain and ensure libstdc++ compatibility
+RUN mamba install --quiet --yes \
+    'gxx_linux-64' \
+    'gcc_linux-64' \
+    && mamba clean --all -f -y \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"
+
+# Set LD_LIBRARY_PATH to prioritize conda libraries
+ENV LD_LIBRARY_PATH="${CONDA_DIR}/lib:${LD_LIBRARY_PATH}"
 
 USER ${NB_UID}
 
@@ -45,6 +78,7 @@ RUN mamba install --quiet --yes \
     'gh' \
     'git-lfs' \
     'pkg-config' \
+    'openssl' \
     'r-hmisc' \
     'r-lme4' \
     'r-lmertest' \
