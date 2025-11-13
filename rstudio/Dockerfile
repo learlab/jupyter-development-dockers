@@ -43,13 +43,6 @@ RUN wget ${QUARTO_URL} --quiet -O /tmp/quarto.deb \
     && gdebi --quiet --non-interactive /tmp/quarto.deb \
     && rm /tmp/quarto.deb
 
-#ENV RSTUDIO_URL https://download2.rstudio.org/server/bionic/amd64/rstudio-server-2022.12.0-353-amd64.deb
-# jupyter/r-notebook is built from Ubuntu 22.04
-# Ubuntu 22.04 has migrated from libssl1.X to OpenSSL 3.0
-# We need the daily build of RStudio server, which supports OpenSSL 3.0
-# Once the stable release of RStudio server supports Ubuntu 22.04 (Jammy),
-# we should switch back to stable.
-# ENV RSTUDIO_URL https://s3.amazonaws.com/rstudio-ide-build/server/jammy/amd64/rstudio-server-2023.03.0-daily-316-amd64.deb
 ARG RSTUDIO_URL=https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2025.09.1-401-amd64.deb
 RUN wget ${RSTUDIO_URL} --quiet -O /tmp/rstudio.deb \
     && gdebi --quiet --non-interactive /tmp/rstudio.deb \
