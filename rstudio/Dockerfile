@@ -9,33 +9,24 @@ RUN python3 -m pip install jupyter-rsession-proxy \
 
 USER root
 
+# Install ONLY system packages that can't be provided by conda
+# These are mainly for RStudio/Shiny Server and Quarto
 RUN apt-get update -qq --yes && \
     apt-get install --yes --no-install-recommends -qq \
-        lmodern \
-        gdebi-core\
-        cmake  \
-# Network/web packages (httr, curl, devtools, etc.)
-        libcurl4-openssl-dev \
+        # Required for RStudio/Quarto installation
+        gdebi-core \
+        wget \
         libssl-dev \
-        libssh2-1-dev \
-# LaTeX extras that may be used for Quarto and Rmarkdown
-	texlive \
+	psmisc \
+	libclang-dev \
+	lsb-release \ 
+	# LaTeX for Quarto and Rmarkdown (system-only)
+        lmodern \
+        texlive \
         texlive-latex-extra \
         texlive-fonts-extra \
-# For graphing libraries like igraph and TidySEM
-	libglpk-dev \
-# Protobuf
-	protobuf-compiler \
-	libprotobuf-dev \	
-# Graphics libraries for tidyverse
-        libfontconfig1-dev \
-        libharfbuzz-dev \
-        libfreetype6-dev \
-        libpng-dev \
-        libtiff5-dev \
-        libjpeg-dev \
-        libcairo2-dev \
-        libfribidi-dev > /dev/null
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Quarto CLI
 ARG QUARTO_URL=https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.9/quarto-1.9.9-linux-amd64.deb
@@ -48,16 +39,81 @@ RUN wget ${RSTUDIO_URL} --quiet -O /tmp/rstudio.deb \
     && gdebi --quiet --non-interactive /tmp/rstudio.deb \
     && rm /tmp/rstudio.deb
     
-# ENV SHINY_URL https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.20.1002-amd64.deb
 ARG SHINY_URL=https://download3.rstudio.org/ubuntu-20.04/x86_64/shiny-server-1.5.23.1030-amd64.deb
 RUN wget ${SHINY_URL} --quiet -O /tmp/shiny.deb \
     && gdebi --quiet --non-interactive /tmp/shiny.deb \
     && rm /tmp/shiny.deb
 
-# Install conda compiler toolchain and ensure libstdc++ compatibility
+# Add rstudio-server to PATH
+ENV PATH=$PATH:/usr/lib/rstudio-server/bin
+
+# Switch back to jovyan user for conda installations
+USER ${NB_UID}
+
+# Install R package dependencies and development tools via conda
+# This ensures binary compatibility with the conda R installation
 RUN mamba install --quiet --yes \
+    # Compiler toolchain (needed for source package compilation)
     'gxx_linux-64' \
     'gcc_linux-64' \
+    'gfortran_linux-64' \
+    # Development libraries (conda versions compatible with conda R)
+    'cmake' \
+    'make' \
+    'pkg-config' \
+    'libxml2' \
+    'libcurl' \
+    'openssl' \
+    'libgit2' \
+    'libssh2' \
+    'zeromq' \
+    'cairo' \
+    'pango' \
+    'harfbuzz' \
+    'freetype' \
+    'libpng' \
+    'libtiff' \
+    'jpeg' \
+    'fontconfig' \
+    'fribidi' \
+    'glpk' \
+    'protobuf' \
+    # Required for string manipulation libraries
+    'icu' \
+    # Git tools
+    'gh' \
+    'git-lfs' \
+    # Jupyter extensions
+    'jupyter-server-proxy' \
+    && mamba clean --all -f -y \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"
+
+# Install R packages via conda (binary packages, much faster and more reliable)
+RUN mamba install --quiet --yes \
+    # Core R packages
+    'r-tidyverse' \
+    'r-quarto' \
+    'r-stringi' \
+    'r-stringr' \
+    # Statistical packages
+    'r-hmisc' \
+    'r-lme4' \
+    'r-lmertest' \
+    'r-psych' \
+    'r-nlme' \
+    'r-car' \
+    'r-lavaan' \
+    'r-rstatix' \
+    # Network/web packages
+    'r-httr' \
+    'r-curl' \
+    'r-jsonlite' \
+    'r-xml2' \
+    # Development tools
+    'r-devtools' \
+    'r-remotes' \
+    'r-pkgbuild' \
     && mamba clean --all -f -y \
     && fix-permissions "${CONDA_DIR}" \
     && fix-permissions "/home/${NB_USER}"
@@ -65,26 +121,6 @@ RUN mamba install --quiet --yes \
 # Set LD_LIBRARY_PATH to prioritize conda libraries
 ENV LD_LIBRARY_PATH="${CONDA_DIR}/lib:${LD_LIBRARY_PATH}"
 
-USER ${NB_UID}
-
-RUN mamba install --quiet --yes \
-    'gh' \
-    'git-lfs' \
-    'pkg-config' \
-    'openssl' \
-    'r-hmisc' \
-    'r-lme4' \
-    'r-lmertest' \
-    'r-psych' \
-    'r-nlme' \
-    'r-car' \
-    'r-rstatix' \
-    'r-renv' \
-    'r-quarto' \
-    'r-tidyverse' \
-    'jupyter-server-proxy' \
-    && mamba clean --all -f -y \
-    && fix-permissions "${CONDA_DIR}" \
-    && fix-permissions "/home/${NB_USER}"
-    
-ENV PATH=$PATH:/usr/lib/rstudio-server/bin
+# Set locale (helpful for R)
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
