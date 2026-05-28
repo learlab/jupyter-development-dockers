@@ -94,6 +94,7 @@ RUN mamba install --quiet --yes \
     # Core R packages
     'r-tidyverse' \
     'r-quarto' \
+    'r-renv' \
     'r-stringi' \
     'r-stringr' \
     # Statistical packages
